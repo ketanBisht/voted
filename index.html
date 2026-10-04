@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vote Yogi — Placement Coordinator</title>
+  <meta name="description" content="Vote Yogendra Chaurasiya as Placement Coordinator — builder, networker, your guy."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --sb:      #A8D5B5;
+      --cream:   #F5F0E8;
+      --yellow:  #F2C94C;
+      --white:   #FFFFFF;
+      --black:   #111111;
+      --mid:     #555555;
+      --light:   #999999;
+      --bd:      1.5px solid var(--black);
+      --sh:      3px 3px 0 var(--black);
+      --sh-sm:   2px 2px 0 var(--black);
+      --r:       10px;
+      --sw:      230px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--black);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: var(--sw);
+      min-height: 100vh;
+      background: var(--sb);
+      border-right: var(--bd);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 200;
+      padding: 26px 0 22px;
+    }
+
+    .sb-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 20px 24px;
+      border-bottom: var(--bd);
+      margin-bottom: 6px;
+    }
+    .sb-avatar {
+      width: 38px; height: 38px;
+      border: var(--bd);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--black);
+      flex-shrink: 0;
+    }
+    .sb-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+    .sb-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      line-height: 1.1;
+      letter-spacing: -0.3px;
+    }
+    .sb-sub {
+      font-size: 0.62rem;
+      color: rgba(0,0,0,0.5);
+      margin-top: 2px;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.3px;
+    }
+
+    .sb-nav { flex: 1; padding: 6px 12px; display: flex; flex-direction: column; gap: 2px; }
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--black);
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      transition: background 0.13s, border-color 0.13s;
+      font-family: 'Inter', sans-serif;
+    }
+    .sb-item:hover  { background: rgba(0,0,0,0.07); }
+    .sb-item.active { background: var(--black); color: var(--white); border-color: var(--black); }
+    .sb-icon {
+      width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .sb-icon svg { width: 14px; height: 14px; stroke-width: 1.8; }
+    .sb-item.active .sb-icon svg { stroke: var(--white); }
+
+    .sb-bottom {
+      padding: 14px 14px 0;
+      border-top: var(--bd);
+      margin-top: 8px;
+    }
+    .sb-vote {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--bd);
+      border-radius: 999px;
+      padding: 10px 0;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      box-shadow: var(--sh-sm);
+      transition: all 0.12s;
+    }
+    .sb-vote:hover { transform: translate(-2px,-2px); box-shadow: var(--sh); }
+    .sb-wa {
+      display: block;
+      text-align: center;
+      margin-top: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(0,0,0,0.5);
+      text-decoration: none;
+    }
+    .sb-wa:hover { color: var(--black); }
+
+    /* ─── TICKER ─── */
+    .ticker-wrap {
+      position: fixed;
+      top: 0; left: var(--sw); right: 0;
+      z-index: 100;
+      background: var(--black);
+      border-bottom: var(--bd);
+      overflow: hidden;
+      padding: 7px 0;
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      color: var(--yellow);
+    }
+    .ticker-inner span { margin: 0 28px; }
+    @keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+    /* ─── MAIN ─── */
+    .main {
+      margin-left: var(--sw);
+      padding-top: 44px;
+      flex: 1;
+      padding-left: 28px;
+      padding-right: 28px;
+      padding-bottom: 60px;
+      max-width: calc(100vw - var(--sw));
+    }
+
+    /* ─── SECTION ─── */
+    .sec { margin-top: 32px; }
+    .sec-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .sec-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+    .sec-action {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      border: var(--bd);
+      border-radius: 999px;
+      padding: 4px 12px;
+      text-decoration: none;
+      color: var(--black);
+      transition: all 0.12s;
+    }
+    .sec-action:hover { background: var(--black); color: var(--white); }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--white);
+      border: var(--bd);
+      border-radius: var(--r);
+      box-shadow: var(--sh-sm);
+      overflow: hidden;
+      position: relative;
+    }
+    .cp { padding: 20px; }
+
+    /* ─── PROFILE CARD ─── */
+    .profile-card {
+      background: var(--yellow);
+      border: var(--bd);
+      border-radius: var(--r);
+      box-shadow: var(--sh);
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      overflow: hidden;
+    }
+    .profile-img {
+      width: 190px; height: 210px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      border-right: var(--bd);
+    }
+    #imgFallback {
+      width: 190px; height: 210px;
+      background: rgba(0,0,0,0.1);
+      border-right: var(--bd);
+      display: none;
+      align-items: center; justify-content: center;
+    }
+    .profile-right {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .profile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .profile-name {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+    .profile-email {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(0,0,0,0.5);
+      margin-top: 4px;
+    }
+    .profile-socials { display: flex; gap: 5px; flex-shrink: 0; }
+    .psoc {
+      width: 28px; height: 28px;
+      border: var(--bd);
+      border-radius: 6px;
+      background: rgba(0,0,0,0.1);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: all 0.12s;
+      color: var(--black);
+    }
+    .psoc:hover { background: var(--black); color: var(--yellow); }
+    .psoc svg { width: 13px; height: 13px; stroke-width: 2; }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin: 14px 0 12px;
+    }
+    .pstat {
+      border: var(--bd);
+      border-radius: 7px;
+      background: rgba(255,255,255,0.3);
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .pstat-num {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      display: block;
+      line-height: 1;
+    }
+    .pstat-lbl {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.58rem;
+      color: rgba(0,0,0,0.5);
+      margin-top: 2px;
+    }
+    .profile-bio {
+      font-size: 0.77rem;
+      color: rgba(0,0,0,0.6);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .profile-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      border: var(--bd);
+      border-radius: 999px;
+      padding: 9px 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-dark  { background: var(--black); color: var(--white); box-shadow: var(--sh-sm); }
+    .btn-dark:hover { transform: translate(-1px,-1px); box-shadow: var(--sh); }
+    .btn-ghost { background: transparent; color: var(--black); }
+    .btn-ghost:hover { background: rgba(0,0,0,0.08); }
+
+    /* ─── STAT ROW ─── */
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+    .stat-box {
+      border: var(--bd);
+      border-radius: 8px;
+      padding: 15px 14px;
+      text-align: center;
+      background: var(--white);
+    }
+    .stat-box.yellow { background: var(--yellow); }
+    .stat-num {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      display: block;
+      line-height: 1;
+    }
+    .stat-lbl {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      color: var(--mid);
+      margin-top: 4px;
+    }
+
+    /* ─── GRID LAYOUT ─── */
+    .grid-2    { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-7030 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 14px; }
+
+    /* ─── WHY REASONS ─── */
+    .reasons { display: flex; flex-direction: column; gap: 8px; }
+    .reason {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border: var(--bd);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: var(--white);
+      box-shadow: var(--sh-sm);
+      transition: all 0.12s;
+    }
+    .reason:hover { transform: translate(-1px,-1px); box-shadow: var(--sh); }
+    .reason-num {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: rgba(0,0,0,0.15);
+      min-width: 20px;
+      line-height: 1.3;
+    }
+    .reason-body {}
+    .reason-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 2px;
+    }
+    .reason-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      color: var(--mid);
+      line-height: 1.45;
+    }
+
+    /* ─── FLIP CARDS ─── */
+    .flip-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+    .fc { height: 108px; perspective: 700px; cursor: pointer; }
+    .fc-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.42s ease;
+    }
+    .fc:hover .fc-inner, .fc.flipped .fc-inner { transform: rotateY(180deg); }
+    .fc-f, .fc-b {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      border: var(--bd); border-radius: 8px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px; text-align: center;
+    }
+    .fc-f { background: var(--white); }
+    .fc-b { background: var(--yellow); transform: rotateY(180deg); }
+    .fc-label {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      margin-top: 6px;
+    }
+    .fc-icon { opacity: 0.35; }
+    .fc-icon svg { width: 26px; height: 26px; stroke-width: 1.5; }
+    .fc-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      line-height: 1.45;
+      color: rgba(0,0,0,0.7);
+    }
+
+    /* ─── VOTE CLICKER ─── */
+    .vote-wrap {
+      background: var(--yellow);
+      border: var(--bd);
+      border-radius: 8px;
+      box-shadow: var(--sh-sm);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.08s, box-shadow 0.08s;
+      margin-top: 9px;
+    }
+    .vote-wrap:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--black); }
+    .vote-count {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 3.2rem;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin: 6px 0;
+    }
+    .vote-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+    .vote-hint {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: rgba(0,0,0,0.4);
+      margin-top: 6px;
+    }
+    .ripbox { position:absolute;inset:0;overflow:hidden;pointer-events:none; }
+    .rip {
+      position:absolute; border-radius:50%;
+      background:rgba(0,0,0,0.08);
+      animation: rip .5s ease-out forwards;
+    }
+    @keyframes rip { from{transform:scale(0);opacity:1} to{transform:scale(5);opacity:0} }
+
+    /* ─── CARD TITLE ─── */
+    .ctitle {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.2px;
+    }
+    .csub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--light);
+      margin-bottom: 14px;
+      margin-top: 3px;
+    }
+
+    /* ─── QUIZ ─── */
+    .quiz-dots { display: flex; gap: 5px; margin-bottom: 12px; }
+    .qdot {
+      width: 7px; height: 7px; border-radius: 50%;
+      border: 1.5px solid var(--black); background: transparent;
+      transition: background 0.2s;
+    }
+    .qdot.done { background: var(--black); }
+    .quiz-q {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      min-height: 36px;
+      line-height: 1.4;
+    }
+    .quiz-opts { display: flex; flex-direction: column; gap: 7px; }
+    .qopt {
+      background: var(--cream);
+      border: var(--bd); border-radius: 7px;
+      padding: 9px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.77rem;
+      cursor: pointer;
+      transition: all 0.12s; text-align: left;
+    }
+    .qopt:hover { background: var(--yellow); transform: translate(-1px,-1px); box-shadow: var(--sh-sm); }
+    .qopt.correct { background: #c6eacc !important; }
+    .qopt.wrong   { background: #f5c6c6 !important; }
+    .quiz-end {
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 20px; text-align: center;
+    }
+    .quiz-end-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800; font-size: 1.25rem; margin-bottom: 4px;
+    }
+    .quiz-end-sub {
+      font-size: 0.7rem; color: var(--mid); margin-bottom: 16px;
+      font-family: 'Inter', sans-serif;
+    }
+    .quiz-score {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800; font-size: 3rem; letter-spacing: -2px; margin-bottom: 8px;
+    }
+    .quiz-replay {
+      background: var(--black); color: var(--white);
+      border: var(--bd); border-radius: 999px;
+      padding: 8px 20px; font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; cursor: pointer;
+    }
+
+    /* ─── SPIN WHEEL ─── */
+    .spin-inner {
+      padding: 20px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 12px;
+    }
+    .wheel-wrap { position: relative; width: 160px; height: 160px; }
+    .wheel-ptr {
+      position: absolute; top: -10px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.1rem; z-index: 5;
+      /* SVG pointer instead */
+    }
+    .ptr-svg { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); z-index: 5; }
+    #spinCanvas { border-radius: 50%; border: var(--bd); box-shadow: var(--sh-sm); }
+    .spin-res {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      text-align: center; min-height: 32px;
+      width: 100%; padding: 7px 10px;
+      background: var(--cream); border: var(--bd); border-radius: 7px;
+    }
+    .spin-go {
+      background: var(--black); color: var(--white);
+      border: var(--bd); border-radius: 999px;
+      padding: 8px 24px; font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; cursor: pointer;
+      box-shadow: var(--sh-sm); transition: all 0.12s;
+    }
+    .spin-go:hover { transform: translate(-1px,-1px); box-shadow: var(--sh); }
+    .spin-go:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ─── DRAG GAME ─── */
+    .drag-area { display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; }
+    .drag-src  { display: flex; flex-wrap: wrap; gap: 7px; flex: 1; }
+    .dtok {
+      background: var(--cream); border: var(--bd); border-radius: 7px;
+      padding: 7px 12px; font-family: 'Space Mono', monospace;
+      font-size: 0.62rem; cursor: grab; user-select: none;
+      box-shadow: var(--sh-sm); transition: all 0.12s;
+    }
+    .dtok:hover { transform: scale(1.04) rotate(-1deg); }
+    .dtok.dragging { opacity: 0.3; }
+    .dzone {
+      width: 165px; min-height: 85px;
+      border: 1.5px dashed var(--black); border-radius: 8px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px; text-align: center; gap: 5px;
+      transition: background 0.15s;
+    }
+    .dzone.hov { background: rgba(168,213,181,0.35); }
+    .dzone-lbl { font-family: 'Space Mono', monospace; font-size: 0.55rem; opacity: 0.4; }
+    .ddropped  { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+    .dchip {
+      background: rgba(168,213,181,0.5); border: var(--bd); border-radius: 5px;
+      padding: 3px 8px; font-family: 'Space Mono', monospace; font-size: 0.55rem;
+    }
+
+    /* ─── CONNECT LIST ─── */
+    .con-list { display: flex; flex-direction: column; gap: 7px; }
+    .con-row {
+      display: flex; align-items: center; justify-content: space-between;
+      border: var(--bd); border-radius: 8px;
+      padding: 10px 13px; text-decoration: none;
+      color: var(--black); background: var(--cream);
+      transition: all 0.12s;
+    }
+    .con-row:hover { background: var(--yellow); transform: translate(-1px,-1px); box-shadow: var(--sh-sm); }
+    .con-left { display: flex; align-items: center; gap: 10px; }
+    .con-ic {
+      width: 30px; height: 30px; border: var(--bd); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--white);
+    }
+    .con-ic svg { width: 13px; height: 13px; stroke-width: 2; }
+    .con-name   { font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.8rem; font-weight: 600; }
+    .con-handle { font-family: 'Space Mono', monospace; font-size: 0.6rem; color: var(--light); }
+    .con-arr    { font-family: 'Space Mono', monospace; font-size: 0.7rem; opacity: 0.35; }
+
+    /* ─── PLAN / MANIFESTO ─── */
+    .plan-items { display: flex; flex-direction: column; gap: 10px; }
+    .plan-item  { display: flex; align-items: flex-start; gap: 14px; }
+    .plan-num {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800; font-size: 2rem;
+      line-height: 1; min-width: 30px;
+      opacity: 0.15; color: var(--white);
+    }
+    .plan-body {}
+    .plan-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700; font-size: 0.85rem;
+      color: var(--white); margin-bottom: 2px;
+    }
+    .plan-desc  { font-family: 'Inter', sans-serif; font-size: 0.72rem; color: rgba(255,255,255,0.5); line-height: 1.45; }
+
+    /* ─── CONFETTI ─── */
+    .cfetti {
+      position: fixed; width: 7px; height: 7px; opacity: 0;
+      animation: cf 1.1s ease-in forwards;
+      z-index: 9999; pointer-events: none;
+    }
+    @keyframes cf {
+      0%   { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(70vh) rotate(500deg); opacity: 0; }
+    }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 20px; right: 20px;
+      background: var(--black); color: var(--yellow);
+      border: var(--bd); border-radius: 10px;
+      padding: 10px 18px; font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; box-shadow: var(--sh);
+      z-index: 999; opacity: 0; transform: translateY(14px);
+      transition: all 0.28s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ─── MOBILE TOPNAV (hidden on desktop) ─── */
+    .mobile-nav {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 300;
+      background: var(--sb);
+      border-bottom: var(--bd);
+      padding: 12px 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mobile-logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800; font-size: 1rem; letter-spacing: -0.3px;
+    }
+    .mobile-vote {
+      background: var(--black); color: var(--yellow);
+      border: var(--bd); border-radius: 999px;
+      padding: 6px 16px; font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; font-weight: 700;
+      text-decoration: none; box-shadow: var(--sh-sm);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      :root { --sw: 0px; }
+      .sidebar { display: none; }
+      .ticker-wrap { left: 0; }
+      .mobile-nav { display: flex; }
+      .main {
+        margin-left: 0; max-width: 100%;
+        padding: 60px 16px 50px;
+      }
+      .profile-card { grid-template-columns: 1fr; }
+      .profile-img { width: 100%; height: 220px; border-right: none; border-bottom: var(--bd); }
+      #imgFallback { width: 100%; height: 220px; border-right: none; border-bottom: var(--bd); }
+      .profile-stats { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-7030 { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .flip-row { grid-template-columns: 1fr 1fr; }
+      .drag-area { flex-direction: column; }
+      .dzone { width: 100%; }
+    }
+
+    @media (max-width: 520px) {
+      .stat-row { grid-template-columns: 1fr; }
+      .profile-btns { flex-direction: column; }
+      .profile-stats { grid-template-columns: repeat(2, 1fr); }
+      .sec-title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-avatar">
+      <img src="/yogi.jpg" alt="Yogi" onerror="this.style.display='none'"/>
+    </div>
+    <div>
+      <div class="sb-title">Yogi</div>
+      <div class="sb-sub">Placement Coordinator</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <a class="sb-item active" href="#profile" onclick="setActive(this)">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+      Profile
+    </a>
+    <a class="sb-item" href="#why" onclick="setActive(this)">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg></span>
+      Why Yogi
+    </a>
+    <a class="sb-item" href="#interactive" onclick="setActive(this)">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 12h2M17 10h2"/></svg></span>
+      Interactive
+    </a>
+    <a class="sb-item" href="#connect" onclick="setActive(this)">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
+      Connect
+    </a>
+    <a class="sb-item" href="#plan" onclick="setActive(this)">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg></span>
+      The Plan
+    </a>
+    <a class="sb-item" href="https://notyogi.space/" target="_blank">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg></span>
+      Portfolio
+    </a>
+    <a class="sb-item" href="https://github.com/notyogi" target="_blank">
+      <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77a5.07 5.07 0 00-.09-3.77S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></span>
+      GitHub
+    </a>
+  </nav>
+
+  <div class="sb-bottom">
+    <a class="sb-vote" href="https://wa.me/919999058333?text=Hey%20Yogi!%20Voting%20for%20you%20as%20Placement%20Coordinator!" target="_blank">
+      Vote for Yogi
+    </a>
+    <a class="sb-wa" href="https://wa.me/919999058333" target="_blank">+91 99990 58333</a>
+  </div>
+</aside>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <div class="mobile-logo">Vote Yogi</div>
+  <a class="mobile-vote" href="https://wa.me/919999058333?text=Hey%20Yogi!%20Voting%20for%20you!" target="_blank">Vote Now</a>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-inner">
+    <span>VOTE YOGI</span><span>&middot;</span>
+    <span>PLACEMENT COORDINATOR 2024</span><span>&middot;</span>
+    <span>FULL STACK DEVELOPER</span><span>&middot;</span>
+    <span>500+ LINKEDIN CONNECTIONS</span><span>&middot;</span>
+    <span>OPEN SOURCE CONTRIBUTOR</span><span>&middot;</span>
+    <span>YOUR BEST BET</span><span>&middot;</span>
+    <span>VOTE YOGI</span><span>&middot;</span>
+    <span>PLACEMENT COORDINATOR 2024</span><span>&middot;</span>
+    <span>FULL STACK DEVELOPER</span><span>&middot;</span>
+    <span>500+ LINKEDIN CONNECTIONS</span><span>&middot;</span>
+    <span>OPEN SOURCE CONTRIBUTOR</span><span>&middot;</span>
+    <span>YOUR BEST BET</span><span>&middot;</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- PROFILE -->
+  <section class="sec" id="profile">
+    <div class="sec-head">
+      <h1 class="sec-title">Candidate info</h1>
+      <a class="sec-action" href="https://notyogi.space/" target="_blank">Portfolio &nearr;</a>
+    </div>
+
+    <div class="profile-card">
+      <img class="profile-img" src="/yogi.jpg" alt="Yogendra Chaurasiya"
+        onerror="this.style.display='none'; document.getElementById('imgFallback').style.display='flex';"/>
+      <div id="imgFallback"></div>
+
+      <div class="profile-right">
+        <div class="profile-top">
+          <div>
+            <div class="profile-name">Yogendra Chaurasiya</div>
+            <div class="profile-email">yogendrachaurasiya30@gmail.com</div>
+          </div>
+          <div class="profile-socials">
+            <a class="psoc" href="https://x.com/notyogi_" target="_blank" title="X / Twitter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4l16 16M4 20L20 4"/></svg>
+            </a>
+            <a class="psoc" href="https://www.linkedin.com/in/yogendra30" target="_blank" title="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.01M12 17v-4a2 2 0 014 0v4M12 10v7"/></svg>
+            </a>
+            <a class="psoc" href="https://github.com/notyogi" target="_blank" title="GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="pstat"><span class="pstat-num">500+</span><div class="pstat-lbl">LinkedIn</div></div>
+          <div class="pstat"><span class="pstat-num">12+</span><div class="pstat-lbl">Projects</div></div>
+          <div class="pstat"><span class="pstat-num">30+</span><div class="pstat-lbl">GitHub Stars</div></div>
+          <div class="pstat"><span class="pstat-num">3+</span><div class="pstat-lbl">Years dev</div></div>
+        </div>
+
+        <p class="profile-bio">Full stack developer, open source contributor, relentless networker. I build things, ship things, and connect people — exactly what a placement coordinator should do.</p>
+
+        <div class="profile-btns">
+          <a class="btn btn-dark" href="https://wa.me/919999058333?text=Hey%20Yogi!%20Voting%20for%20you%20as%20Placement%20Coordinator!" target="_blank">Vote on WhatsApp</a>
+          <a class="btn btn-ghost" href="https://notyogi.space/" target="_blank">See Portfolio</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box yellow">
+        <span class="stat-num">Placement Coordinator</span>
+        <div class="stat-lbl">Candidate 2024</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">Full Stack</span>
+        <div class="stat-lbl">React &middot; Node &middot; Python &middot; Docker</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">Open Source</span>
+        <div class="stat-lbl">Active contributor, not just a consumer</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY YOGI -->
+  <section class="sec" id="why">
+    <div class="sec-head">
+      <h2 class="sec-title">Why Yogi?</h2>
+      <span class="sec-action" style="cursor:default;">hover cards to flip</span>
+    </div>
+
+    <div class="grid-2">
+      <!-- Reasons list -->
+      <div class="reasons">
+        <div class="reason">
+          <div class="reason-num">01</div>
+          <div class="reason-body">
+            <div class="reason-title">Real recruiter network</div>
+            <div class="reason-desc">500+ LinkedIn connections including hiring managers at top tech companies.</div>
+          </div>
+        </div>
+        <div class="reason">
+          <div class="reason-num">02</div>
+          <div class="reason-body">
+            <div class="reason-title">Knows what companies want</div>
+            <div class="reason-desc">12+ live projects. Reviews code daily — knows exactly what impresses.</div>
+          </div>
+        </div>
+        <div class="reason">
+          <div class="reason-num">03</div>
+          <div class="reason-body">
+            <div class="reason-title">Zero radio silence</div>
+            <div class="reason-desc">Clear, consistent updates. You will always know where things stand.</div>
+          </div>
+        </div>
+        <div class="reason">
+          <div class="reason-num">04</div>
+          <div class="reason-body">
+            <div class="reason-title">Ships, not just talks</div>
+            <div class="reason-desc">Open source contributor. If it needs to happen, it happens.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: flip cards + vote clicker -->
+      <div>
+        <div class="flip-row">
+          <div class="fc">
+            <div class="fc-inner">
+              <div class="fc-f">
+                <div class="fc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+                <div class="fc-label">Network</div>
+              </div>
+              <div class="fc-b"><div class="fc-text">500+ LinkedIn. Real doors, not just DMs.</div></div>
+            </div>
+          </div>
+          <div class="fc">
+            <div class="fc-inner">
+              <div class="fc-f">
+                <div class="fc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                <div class="fc-label">Builder</div>
+              </div>
+              <div class="fc-b"><div class="fc-text">12+ live products. Builds — and teaches others to.</div></div>
+            </div>
+          </div>
+          <div class="fc">
+            <div class="fc-inner">
+              <div class="fc-f">
+                <div class="fc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+                <div class="fc-label">Comms</div>
+              </div>
+              <div class="fc-b"><div class="fc-text">Transparent updates. No black holes during placement season.</div></div>
+            </div>
+          </div>
+          <div class="fc">
+            <div class="fc-inner">
+              <div class="fc-f">
+                <div class="fc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                <div class="fc-label">OSS</div>
+              </div>
+              <div class="fc-b"><div class="fc-text">Open source contributor. 30+ GitHub stars and counting.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vote clicker -->
+        <div class="vote-wrap" id="voteCard">
+          <div class="ripbox" id="ripBox"></div>
+          <div class="vote-lbl">Campus Cheers</div>
+          <div class="vote-count" id="voteNum">0</div>
+          <div class="vote-hint">tap to cheer &mdash; every 10 triggers confetti</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE -->
+  <section class="sec" id="interactive">
+    <div class="sec-head">
+      <h2 class="sec-title">Interactive</h2>
+      <span class="sec-action" style="cursor:default;">have fun</span>
+    </div>
+
+    <div class="grid-7030">
+      <!-- QUIZ -->
+      <div class="card cp">
+        <div class="ctitle">Quick Quiz</div>
+        <div class="csub">How well do you know your candidate?</div>
+        <div id="quizBody">
+          <div class="quiz-dots" id="qDots"></div>
+          <div class="quiz-q" id="qText"></div>
+          <div class="quiz-opts" id="qOpts"></div>
+        </div>
+        <div class="quiz-end" id="qEnd">
+          <div class="quiz-score" id="qScore"></div>
+          <div class="quiz-end-title" id="qEndTitle"></div>
+          <div class="quiz-end-sub" id="qEndSub"></div>
+          <button class="quiz-replay" onclick="startQuiz()">Play Again</button>
+        </div>
+      </div>
+
+      <!-- SPIN WHEEL -->
+      <div class="card">
+        <div class="spin-inner">
+          <div class="ctitle" style="text-align:center;">Spin for a fact</div>
+          <div class="wheel-wrap">
+            <svg class="ptr-svg" width="16" height="16" viewBox="0 0 16 16">
+              <polygon points="8,2 14,14 2,14" fill="#111" stroke="#111" stroke-width="1"/>
+            </svg>
+            <canvas id="spinCanvas" width="160" height="160"></canvas>
+          </div>
+          <div class="spin-res" id="spinRes">Press Spin</div>
+          <button class="spin-go" id="spinBtn" onclick="doSpin()">Spin</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRAG GAME -->
+  <section class="sec">
+    <div class="card cp">
+      <div class="ctitle">Build the Dream Toolkit</div>
+      <div class="csub">Drag skills you want your coordinator to have &mdash; drop them in the box</div>
+      <div class="drag-area">
+        <div class="drag-src" id="dragSrc">
+          <div class="dtok" draggable="true" data-sk="Resume Review">Resume Review</div>
+          <div class="dtok" draggable="true" data-sk="Mock Interviews">Mock Interviews</div>
+          <div class="dtok" draggable="true" data-sk="Company Connects">Company Connects</div>
+          <div class="dtok" draggable="true" data-sk="Quick Updates">Quick Updates</div>
+          <div class="dtok" draggable="true" data-sk="Open Source">Open Source</div>
+          <div class="dtok" draggable="true" data-sk="Hustle Mode">Hustle Mode</div>
+        </div>
+        <div class="dzone" id="dropZone">
+          <div class="dzone-lbl" id="dzLbl">Drop here</div>
+          <div class="ddropped" id="dDropped"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONNECT + PLAN -->
+  <section class="sec" id="connect">
+    <div class="sec-head">
+      <h2 class="sec-title">Connect</h2>
+    </div>
+    <div class="grid-2">
+      <!-- CONNECT -->
+      <div class="card cp">
+        <div class="ctitle">Find me here</div>
+        <div class="csub">Reach out anytime</div>
+        <div class="con-list">
+          <a class="con-row" href="https://wa.me/919999058333" target="_blank">
+            <div class="con-left">
+              <div class="con-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
+              <div><div class="con-name">WhatsApp</div><div class="con-handle">+91 99990 58333</div></div>
+            </div>
+            <div class="con-arr">&rarr;</div>
+          </a>
+          <a class="con-row" href="https://www.linkedin.com/in/yogendra30" target="_blank">
+            <div class="con-left">
+              <div class="con-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.01M12 17v-4a2 2 0 014 0v4M12 10v7"/></svg></div>
+              <div><div class="con-name">LinkedIn</div><div class="con-handle">yogendra30</div></div>
+            </div>
+            <div class="con-arr">&rarr;</div>
+          </a>
+          <a class="con-row" href="https://github.com/notyogi" target="_blank">
+            <div class="con-left">
+              <div class="con-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
+              <div><div class="con-name">GitHub</div><div class="con-handle">notyogi</div></div>
+            </div>
+            <div class="con-arr">&rarr;</div>
+          </a>
+          <a class="con-row" href="https://x.com/notyogi_" target="_blank">
+            <div class="con-left">
+              <div class="con-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4l16 16M4 20L20 4"/></svg></div>
+              <div><div class="con-name">X / Twitter</div><div class="con-handle">@notyogi_</div></div>
+            </div>
+            <div class="con-arr">&rarr;</div>
+          </a>
+          <a class="con-row" href="https://notyogi.space/" target="_blank">
+            <div class="con-left">
+              <div class="con-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg></div>
+              <div><div class="con-name">Portfolio</div><div class="con-handle">notyogi.space</div></div>
+            </div>
+            <div class="con-arr">&rarr;</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- THE PLAN -->
+      <div class="card" id="plan" style="background:var(--black);">
+        <div class="cp">
+          <div class="ctitle" style="color:var(--yellow);">The Plan</div>
+          <div class="csub" style="color:rgba(255,255,255,0.25);">Three promises. No fluff.</div>
+          <div class="plan-items">
+            <div class="plan-item">
+              <div class="plan-num">01</div>
+              <div class="plan-body">
+                <div class="plan-title">More Companies</div>
+                <div class="plan-desc">Leverage my network to bring in fresh recruiters every semester.</div>
+              </div>
+            </div>
+            <div class="plan-item">
+              <div class="plan-num">02</div>
+              <div class="plan-body">
+                <div class="plan-title">Prep Resources</div>
+                <div class="plan-desc">Free mock interviews and resume workshops, every single week.</div>
+              </div>
+            </div>
+            <div class="plan-item">
+              <div class="plan-num">03</div>
+              <div class="plan-body">
+                <div class="plan-title">Transparent Updates</div>
+                <div class="plan-desc">No more guessing. Real-time placement status, always.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── SIDEBAR ACTIVE ── */
+function setActive(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── VOTE CLICKER ── */
+const vCard = document.getElementById('voteCard');
+const vNum  = document.getElementById('voteNum');
+const rBox  = document.getElementById('ripBox');
+let votes = parseInt(localStorage.getItem('yogiVotes') || '0');
+vNum.textContent = votes;
+
+vCard.addEventListener('click', e => {
+  votes++;
+  localStorage.setItem('yogiVotes', votes);
+  vNum.textContent = votes;
+  const rect = vCard.getBoundingClientRect();
+  const d = document.createElement('div');
+  const s = 50;
+  d.className = 'rip';
+  d.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX-rect.left-s/2}px;top:${e.clientY-rect.top-s/2}px;`;
+  rBox.appendChild(d);
+  setTimeout(() => d.remove(), 600);
+  if (votes % 10 === 0) boom(e.clientX, e.clientY);
+  if (votes === 1)  showToast('First cheer!');
+  if (votes === 50) showToast('50 cheers — you are a legend.');
+});
+
+/* ── CONFETTI ── */
+function boom(x, y) {
+  ['#F2C94C','#A8D5B5','#111111','#ffffff'].forEach(col => {
+    for (let i = 0; i < 5; i++) {
+      const c = document.createElement('div');
+      c.className = 'cfetti';
+      c.style.cssText = `left:${x+(Math.random()-.5)*110}px;top:${y-20}px;background:${col};border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*.25}s;animation-duration:${.9+Math.random()*.5}s;`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 1500);
+    }
+  });
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ── SPIN WHEEL ── */
+const facts = [
+  { label: '500+\nLinkedIn', color: '#F2C94C', res: '500+ LinkedIn connections — real recruiter access.' },
+  { label: '12+\nProjects',  color: '#A8D5B5', res: '12+ live projects shipped — he builds, not just talks.' },
+  { label: 'Open\nSource',   color: '#F0EBE1', res: 'Open source contributor — gives back to the community.' },
+  { label: 'Full\nStack',    color: '#F2C94C', res: 'Full Stack Dev — frontend, backend, cloud. All of it.' },
+  { label: 'notyogi\n.space',color: '#A8D5B5', res: 'Has his own website — notyogi.space. Go check it.' },
+  { label: 'Campus\nHustler',color: '#F0EBE1', res: 'Campus Hustler — always on, never idle.' },
+];
+const cvs = document.getElementById('spinCanvas');
+const ctx = cvs.getContext('2d');
+const cx = 80, cy = 80, R = 76;
+const arc = (2 * Math.PI) / facts.length;
+let curA = 0, spinning = false;
+
+function drawWheel(rot) {
+  ctx.clearRect(0, 0, 160, 160);
+  facts.forEach((f, i) => {
+    const s = rot + i * arc, e = s + arc;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, s, e); ctx.closePath();
+    ctx.fillStyle = f.color; ctx.fill();
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(s + arc / 2);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#111';
+    ctx.font = '700 8px Inter, sans-serif';
+    f.label.split('\n').forEach((ln, li) => ctx.fillText(ln, R - 6, -2 + li * 10));
+    ctx.restore();
+  });
+  ctx.beginPath(); ctx.arc(cx, cy, 13, 0, 2 * Math.PI);
+  ctx.fillStyle = '#111'; ctx.fill();
+  ctx.fillStyle = '#F2C94C';
+  ctx.font = '700 8px Space Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('YC', cx, cy + 3);
+}
+drawWheel(0);
+
+function doSpin() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('spinRes').textContent = '...';
+  const total = (5 + Math.random() * 5) * 2 * Math.PI;
+  const tgt = curA + total, t0 = performance.now(), dur = 3000;
+  (function animate(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 4);
+    drawWheel(curA + (tgt - curA) * ease);
+    if (p < 1) { requestAnimationFrame(animate); return; }
+    curA = tgt % (2 * Math.PI);
+    spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+    const norm = ((-Math.PI / 2 - curA) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    const idx = Math.floor(norm / arc) % facts.length;
+    document.getElementById('spinRes').textContent = facts[idx].res;
+  })(t0);
+}
+
+/* ── QUIZ ── */
+const Qs = [
+  { q: "Yogi's portfolio website?",     opts: ['yogendra.dev', 'notyogi.space', 'yogi.codes', 'yogibuilds.io'], a: 1 },
+  { q: "His GitHub handle?",            opts: ['@yogendra30', '@notyogi', '@yogi_codes', '@yogidev'],           a: 1 },
+  { q: "Running for which role?",       opts: ['Cultural Secretary', 'Placement Coordinator', 'Tech Club Head', 'Sports Captain'], a: 1 },
+  { q: "Yogi's primary superpower?",    opts: ['Cricket', 'Cooking', 'Building & Networking', 'Chess'],         a: 2 },
+];
+let qi = 0, sc = 0;
+
+function startQuiz() {
+  qi = 0; sc = 0;
+  document.getElementById('quizBody').style.display = '';
+  document.getElementById('qEnd').style.display = 'none';
+  renderQ();
+}
+function renderQ() {
+  const q = Qs[qi];
+  document.getElementById('qDots').innerHTML = Qs.map((_, i) =>
+    `<div class="qdot${i < qi ? ' done' : ''}"></div>`).join('');
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qOpts').innerHTML = q.opts.map((o, i) =>
+    `<button class="qopt" onclick="ansQ(${i})" id="qo${i}">${o}</button>`).join('');
+}
+function ansQ(c) {
+  document.querySelectorAll('.qopt').forEach(b => b.disabled = true);
+  const q = Qs[qi];
+  if (c === q.a) { document.getElementById(`qo${c}`).classList.add('correct'); sc++; }
+  else { document.getElementById(`qo${c}`).classList.add('wrong'); document.getElementById(`qo${q.a}`).classList.add('correct'); }
+  setTimeout(() => { qi++; qi < Qs.length ? renderQ() : endQuiz(); }, 900);
+}
+function endQuiz() {
+  document.getElementById('quizBody').style.display = 'none';
+  const el = document.getElementById('qEnd');
+  el.style.display = 'flex'; el.style.flexDirection = 'column';
+  const p = sc / Qs.length;
+  document.getElementById('qScore').textContent = `${sc}/${Qs.length}`;
+  document.getElementById('qEndTitle').textContent = p === 1 ? 'Perfect Score.' : p >= .5 ? 'Not bad.' : 'Try again.';
+  document.getElementById('qEndSub').textContent = p === 1 ? 'You know your candidate. Now go vote.' : p >= .5 ? 'Good enough. Vote Yogi.' : 'Visit notyogi.space — get to know him.';
+}
+startQuiz();
+
+/* ── FLIP CARDS ── */
+document.querySelectorAll('.fc').forEach(c => c.addEventListener('click', () => c.classList.toggle('flipped')));
+
+/* ── DRAG & DROP ── */
+const dSrc  = document.getElementById('dragSrc');
+const dZone = document.getElementById('dropZone');
+const dDrop = document.getElementById('dDropped');
+let dragEl  = null;
+
+dSrc.addEventListener('dragstart',  e => { dragEl = e.target; e.target.classList.add('dragging'); });
+dSrc.addEventListener('dragend',    e => e.target.classList.remove('dragging'));
+dZone.addEventListener('dragover',  e => { e.preventDefault(); dZone.classList.add('hov'); });
+dZone.addEventListener('dragleave', ()  => dZone.classList.remove('hov'));
+dZone.addEventListener('drop', e => {
+  e.preventDefault(); dZone.classList.remove('hov');
+  if (!dragEl?.dataset.sk) return;
+  const sk = dragEl.dataset.sk;
+  if ([...dDrop.children].map(c => c.dataset.sk).includes(sk)) return;
+  const ch = document.createElement('div');
+  ch.className = 'dchip'; ch.dataset.sk = sk; ch.textContent = sk;
+  dDrop.appendChild(ch); dragEl.remove();
+  document.getElementById('dzLbl').style.display = 'none';
+  if (dDrop.children.length === 6) { showToast('Full toolkit. Vote Yogi.'); boom(window.innerWidth / 2, window.innerHeight / 3); }
+});
+</script>
+</body>
+</html>
